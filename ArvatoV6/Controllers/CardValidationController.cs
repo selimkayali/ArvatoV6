@@ -17,12 +17,17 @@ public class CardValidationController : ControllerBase
         _cardValidationService = cardValidationService;
     }
 
-    [HttpPost()]
+    [HttpPost]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
     public IActionResult Post(CreditCardInputDto creditCardInput)
     {
+        _logger.LogInformation($"Post action called - {nameof(Post)}");
+
         var result = _cardValidationService.Validate(creditCardInput);
         if (result.IsSuccess is false)
         {
+            _logger.LogError(String.Join(", ", result.Message));
             return BadRequest(result.Message);
         }
 
