@@ -47,7 +47,7 @@ namespace ArvatoV6.Validations
             .Select((e, i) => ((int)e - 48) * (i % 2 == 0 ? 1 : 2))
             .Sum((e) => e / 10 + e % 10);
 
-            return sumOfDigits % 10 is 0;
+            return (sumOfDigits % 10 is 0 && sumOfDigits > 0);
         }
 
         private bool BeInRange(string cvv)
@@ -57,6 +57,8 @@ namespace ArvatoV6.Validations
 
         private bool BeValidExpiryDate(string expiryDate)
         {
+            if(String.IsNullOrWhiteSpace(expiryDate))   return false;
+            
             int yearLimit;
             int.TryParse(_configuration["YearLimit"], out yearLimit);
 

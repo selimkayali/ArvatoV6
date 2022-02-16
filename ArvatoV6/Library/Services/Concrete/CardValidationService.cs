@@ -21,12 +21,12 @@ public class CardValidationService : ICardValidationService
     {
         ApiResult result = new() { IsSuccess = false };
 
-        var res = _validator.Validate(creditCardInput);
+        var validationResult = _validator.Validate(creditCardInput);
 
-        if (res.Errors.Any() is true)
+        if (validationResult.Errors.Any() is true)
         {
-            _logger.LogError(String.Join(", ", res.Errors.Select(x => x.ErrorMessage)));
-            result.Message = res.Errors.First().ErrorMessage;
+            _logger.LogError(String.Join(", ", validationResult.Errors.Select(x => x.ErrorMessage)));
+            result.Message = (String.Join(", ", validationResult.Errors.Select(x => x.ErrorMessage)));
             return result;
         }
 
