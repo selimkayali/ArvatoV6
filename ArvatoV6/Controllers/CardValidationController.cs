@@ -1,5 +1,5 @@
-﻿using ArvatoV6.Models;
-using ArvatoV6.Services.Abstract;
+﻿using ArvatoV6.Library.Services.Abstract;
+using ArvatoV6.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArvatoV6.Controllers;

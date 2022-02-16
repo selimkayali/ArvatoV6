@@ -1,15 +1,19 @@
 using System.Text.RegularExpressions;
-using ArvatoV6.Models;
-using ArvatoV6.Services.Abstract;
+using ArvatoV6.Library.Factories.Abstract;
+using ArvatoV6.Library.Services.Abstract;
+using ArvatoV6.Models.Concrete;
+using ArvatoV6.Models.Dto;
 using FluentValidation;
 
-namespace ArvatoV6.Services.Concrete;
+namespace ArvatoV6.Library.Services.Concrete;
 
 public class CardValidationService : ICardValidationService
 {
+    private readonly ILogger<CardValidationService> _logger;
     private readonly IValidator<CreditCardInputDto> _validator;
-    public CardValidationService(IValidator<CreditCardInputDto> validator)
+    public CardValidationService(ILogger<CardValidationService> logger, IValidator<CreditCardInputDto> validator)
     {
+        _logger = logger;
         _validator = validator;
     }
 
@@ -21,6 +25,7 @@ public class CardValidationService : ICardValidationService
 
         if (res.Errors.Any() is true)
         {
+            _logger.LogError(String.Join(", ", res.Errors.Select(x => x.ErrorMessage)));
             result.Message = res.Errors.First().ErrorMessage;
             return result;
         }
@@ -29,21 +34,24 @@ public class CardValidationService : ICardValidationService
 
         if (cardType is CardType.Invalid)
         {
+            _logger.LogError("Invalid card type");
             result.Message = "Invalid card type";
             return result;
         }
         var cvvCheck = CheckCvv(cardType, creditCardInput.CVV);
         if (cvvCheck is false)
         {
+            _logger.LogError("Invalid CVV");
             result.Message = "Invalid CVV";
             return result;
         }
 
-        return new ApiResult
-        {
-            IsSuccess = true,
-            Data = creditCardInput
-        };
+        var creditCard = CardFactory.CreateCard(cardType);
+
+        result.IsSuccess = true;
+        result.Data = creditCard.GetCardType();
+
+        return result;
     }
 
     private bool CheckCvv(string cardType, string cvv)

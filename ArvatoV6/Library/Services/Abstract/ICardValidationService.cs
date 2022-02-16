@@ -1,6 +1,7 @@
-using ArvatoV6.Models;
+using ArvatoV6.Models.Concrete;
+using ArvatoV6.Models.Dto;
 
-namespace ArvatoV6.Services.Abstract;
+namespace ArvatoV6.Library.Services.Abstract;
 
 public interface ICardValidationService
 {

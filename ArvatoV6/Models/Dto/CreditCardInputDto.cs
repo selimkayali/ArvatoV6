@@ -1,5 +1,4 @@
-﻿using System;
-namespace ArvatoV6.Models
+﻿namespace ArvatoV6.Models.Dto
 {
     public class CreditCardInputDto
     {

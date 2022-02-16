@@ -1,8 +1,8 @@
-﻿using ArvatoV6.Models;
-using ArvatoV6.Services.Abstract;
-using ArvatoV6.Services.Concrete;
+﻿using ArvatoV6.Library.Services.Abstract;
+using ArvatoV6.Library.Services.Concrete;
 using ArvatoV6.Validations;
 using FluentValidation;
+using ArvatoV6.Models.Dto;
 
 var builder = WebApplication.CreateBuilder(args);
 

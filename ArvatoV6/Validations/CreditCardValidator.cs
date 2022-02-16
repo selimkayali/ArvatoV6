@@ -1,20 +1,20 @@
-﻿using ArvatoV6.Models;
+﻿using ArvatoV6.Models.Dto;
 using FluentValidation;
 
 namespace ArvatoV6.Validations
 {
-
-
     public class CreditCardValidator : AbstractValidator<CreditCardInputDto>
     {
-        public CreditCardValidator()
+        private IConfiguration _configuration;
+        public CreditCardValidator(IConfiguration configuration)
         {
-            this.CascadeMode = CascadeMode.Stop;
+            // this.CascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.CardHolder).NotEmpty().WithMessage("Card holder name is required");
             RuleFor(x => x.CardHolder).Must(ContainOnlyChars).WithMessage("Card holder name must contain only letters");
 
             RuleFor(x => x.ExpiryDate).NotEmpty().WithMessage("Expiry date is required");
+            RuleFor(x => x.ExpiryDate).Length(6).WithMessage("Invalid expiry date value");
             RuleFor(x => x.ExpiryDate).Must(ContainOnlyDigits).WithMessage("Expiry date must contain only digits");
             RuleFor(x => x.ExpiryDate).Must(BeValidExpiryDate).WithMessage("Expiry date must be valid");
 
@@ -25,13 +25,12 @@ namespace ArvatoV6.Validations
             RuleFor(x => x.CVV).NotEmpty().WithMessage("CVV is required");
             RuleFor(x => x.CVV).Must(BeInRange).WithMessage("CVV should has 3-4 digits");
             RuleFor(x => x.CVV).Must(ContainOnlyDigits).WithMessage("CVV must contain only digits");
-            //rule of amex cvv is 4 digits
-            RuleFor(x => x.CardNumber).Must(BeAmex).WithMessage("CVV should has 4 digits for amex card");
+            _configuration = configuration;
         }
 
         private bool ContainOnlyChars(string cardHolder)
         {
-            return cardHolder.All(char.IsLetter);
+            return cardHolder.Replace(" ", String.Empty).All(char.IsLetter);
         }
 
         private bool ContainOnlyDigits(string cardNumber)
@@ -58,15 +57,32 @@ namespace ArvatoV6.Validations
 
         private bool BeValidExpiryDate(string expiryDate)
         {
-            var date = DateTime.ParseExact(expiryDate, "MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            return date > DateTime.Now;
+            int yearLimit;
+            int.TryParse(_configuration["YearLimit"], out yearLimit);
 
+            int month;
+            int year;
 
-        }
+            int.TryParse(expiryDate.Substring(0, 2), out month);
+            int.TryParse(expiryDate.Substring(2, 4), out year);
 
-        private bool BeAmex(string cardNumber)
-        {
-            return cardNumber.Length is 4;
+            if (month < 1 || month > 12)
+            {
+                return false;
+            }
+
+            if (year < DateTime.UtcNow.Year || year > DateTime.Now.AddYears(20).Year)
+            {
+                return false;
+            }
+            if (month is 12)
+            {
+                month = 1;
+                year++;
+            }
+
+            var cardExpiryDate = new DateTime(year, month, 1);
+            return cardExpiryDate > DateTime.Now;
         }
     }
 }

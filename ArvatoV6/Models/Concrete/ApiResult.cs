@@ -1,8 +1,8 @@
-namespace ArvatoV6.Models;
+namespace ArvatoV6.Models.Concrete;
 
 public class ApiResult
 {
     public bool IsSuccess { get; set; }
     public string Message { get; set; }
-    public object Data { get; set; }
+    public string Data { get; set; }
 }

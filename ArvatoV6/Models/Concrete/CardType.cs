@@ -1,4 +1,4 @@
-namespace ArvatoV6.Models
+namespace ArvatoV6.Models.Concrete
 {
     public class CardType
     {
