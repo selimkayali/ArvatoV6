@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ArvatoV6.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class CardValidationController : ControllerBase
 {
     private readonly ILogger<CardValidationController> _logger;
