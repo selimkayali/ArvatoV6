@@ -13,19 +13,21 @@ namespace ArvatoV6.Tests;
 
 public class ServiceTests
 {
+    private ICardValidationService _cardValidationService;
     private Mock<ILogger<CardValidationService>> _logger;
     private Mock<IValidator<CreditCardInputDto>> _validator;
     private void CreateSUT()
     {
         _logger = new Mock<ILogger<CardValidationService>>();
         _validator = new Mock<IValidator<CreditCardInputDto>>();
+        _cardValidationService = new CardValidationService(_logger.Object, _validator.Object);
     }
 
     [Theory]
     [InlineData("4111111111111111", "123", CardType.Visa)]
     [InlineData("5399759303865595", "456", CardType.MasterCard)]
     [InlineData("371802759421027", "7890", CardType.AmericanExpress)]
-    public void ProvideValidInputDto_Shoul_ReturnApiResultWithData(string cardNumber, string cvv, string cardType)
+    public void ProvideValidInputDto_Should_ReturnApiResultWithData(string cardNumber, string cvv, string cardType)
     {
         // Arrange
         CreateSUT();
@@ -39,10 +41,8 @@ public class ServiceTests
         };
 
         _validator.Setup(x => x.Validate(cardInputDto)).Returns(new ValidationResult { });
-        ICardValidationService cardValidationService = new CardValidationService(_logger.Object, _validator.Object);
-
         // Act
-        var result = cardValidationService.Validate(cardInputDto);
+        var result = _cardValidationService.Validate(cardInputDto);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -50,7 +50,7 @@ public class ServiceTests
     }
 
     [Fact]
-    public void ProvideInvalidCardNumber_Shoul_ReturnApiResultWithError()
+    public void ProvideInvalidCardNumber_Should_ReturnApiResultWithError()
     {
         // Arrange
         CreateSUT();
@@ -63,10 +63,9 @@ public class ServiceTests
         };
 
         _validator.Setup(x => x.Validate(cardInputDto)).Returns(new ValidationResult { });
-        ICardValidationService cardValidationService = new CardValidationService(_logger.Object, _validator.Object);
 
         // Act
-        var result = cardValidationService.Validate(cardInputDto);
+        var result = _cardValidationService.Validate(cardInputDto);
 
         // Assert
         Assert.False(result.IsSuccess);
@@ -74,7 +73,7 @@ public class ServiceTests
     }
 
     [Fact]
-    public void ProvideInvalidCardCvv_Shoul_ReturnApiResultWithError()
+    public void ProvideInvalidCardCvv_Should_ReturnApiResultWithError()
     {
         // Arrange
         CreateSUT();
@@ -87,10 +86,9 @@ public class ServiceTests
         };
 
         _validator.Setup(x => x.Validate(cardInputDto)).Returns(new ValidationResult { });
-        ICardValidationService cardValidationService = new CardValidationService(_logger.Object, _validator.Object);
 
         // Act
-        var result = cardValidationService.Validate(cardInputDto);
+        var result = _cardValidationService.Validate(cardInputDto);
 
         // Assert
         Assert.False(result.IsSuccess);
