@@ -1,7 +1,7 @@
 Credit Card Validation API
 Application created with latest stable version of .NET 6 sdk.
 There is an POST endpoit for handling the credit card information. Input validations completed with _FluentValidation_,
-business validations completed manually. Luhn algorithm helped me for calculating card number division by 10. Application is containerized and host Docker Hub please use "docker run -p 8080:80 -d selimkayali/arvatov6" command to download image and serve the api from http://localhost:8080/api/cardValidation.
+business validations completed manually. Luhn algorithm helped me for calculating card number division by 10. Application is containerized and pushed to Docker Hub. Please use "docker run -p 8080:80 -d selimkayali/arvatov6" command on your terminal application to download image and run/serve the application on http://localhost:8080/api/cardValidation.
 
 You can use this payload for making a Post request and getting result.
 
