@@ -8,6 +8,7 @@ namespace ArvatoV6.Validations
         private IConfiguration _configuration;
         public CreditCardValidator(IConfiguration configuration)
         {
+            _configuration = configuration;
             // this.CascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.CardHolder).NotEmpty().WithMessage("Card holder name is required");
@@ -25,7 +26,6 @@ namespace ArvatoV6.Validations
             RuleFor(x => x.CVV).NotEmpty().WithMessage("CVV is required");
             RuleFor(x => x.CVV).Must(BeInRange).WithMessage("CVV should has 3-4 digits");
             RuleFor(x => x.CVV).Must(ContainOnlyDigits).WithMessage("CVV must contain only digits");
-            _configuration = configuration;
         }
 
         private bool ContainOnlyChars(string cardHolder)
@@ -57,8 +57,8 @@ namespace ArvatoV6.Validations
 
         private bool BeValidExpiryDate(string expiryDate)
         {
-            if(String.IsNullOrWhiteSpace(expiryDate))   return false;
-            
+            if (String.IsNullOrWhiteSpace(expiryDate)) return false;
+
             int yearLimit;
             int.TryParse(_configuration["YearLimit"], out yearLimit);
 

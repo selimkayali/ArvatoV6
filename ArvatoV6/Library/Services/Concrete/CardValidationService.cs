@@ -19,14 +19,14 @@ public class CardValidationService : ICardValidationService
 
     public ApiResult Validate(CreditCardInputDto creditCardInput)
     {
-        ApiResult result = new() { IsSuccess = false };
+        ApiResult result = new() { IsSuccess = false, Message = new List<string>()};
 
         var validationResult = _validator.Validate(creditCardInput);
 
         if (validationResult.Errors.Any() is true)
         {
             _logger.LogError(String.Join(", ", validationResult.Errors.Select(x => x.ErrorMessage)));
-            result.Message = (String.Join(", ", validationResult.Errors.Select(x => x.ErrorMessage)));
+            result.Message = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
             return result;
         }
 
@@ -35,14 +35,14 @@ public class CardValidationService : ICardValidationService
         if (cardType is CardType.Invalid)
         {
             _logger.LogError("Invalid card type");
-            result.Message = "Invalid card type";
+            result.Message.Add("Invalid card type");
             return result;
         }
         var cvvCheck = CheckCvv(cardType, creditCardInput.CVV);
         if (cvvCheck is false)
         {
             _logger.LogError("Invalid CVV");
-            result.Message = "Invalid CVV";
+            result.Message.Add("Invalid CVV");
             return result;
         }
 
